@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import uom.ics22116.atmservice.account.AccountService;
 import uom.ics22116.atmservice.config.JwtService;
 import uom.ics22116.atmservice.token.Token;
 import uom.ics22116.atmservice.token.TokenRepository;
@@ -29,6 +30,7 @@ public class AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
+  private final AccountService accountService;
 
   public AuthenticationResponse register(RegisterRequest request) {
 
@@ -47,6 +49,7 @@ public class AuthenticationService {
     var savedUser = repository.save(user);
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
+    accountService.createAccount(user);
     saveUserToken(savedUser, jwtToken);
     return AuthenticationResponse.builder()
         .accessToken(jwtToken)

@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import uom.ics22116.atmservice.account.Account;
 import uom.ics22116.atmservice.token.Token;
 
 
@@ -55,8 +56,12 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   @NotNull(message = "Role is mandatory")
   private Role role;
+
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
+
+  @OneToOne(mappedBy = "user")
+  private Account account;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
