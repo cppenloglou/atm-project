@@ -1,5 +1,6 @@
 package uom.ics22116.atmservice.user;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,4 +33,5 @@ public class UserService {
         // save the new password
         repository.save(user);
     }
+
 }

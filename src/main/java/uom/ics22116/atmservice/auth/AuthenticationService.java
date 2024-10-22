@@ -7,7 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uom.ics22116.atmservice.config.JwtService;
@@ -29,6 +31,12 @@ public class AuthenticationService {
   private final AuthenticationManager authenticationManager;
 
   public AuthenticationResponse register(RegisterRequest request) {
+
+    // Check if the email already exists before creating the user
+    if (repository.existsByEmail(request.getEmail())) {
+      throw new IllegalStateException("Email already exists");
+    }
+
     var user = User.builder()
         .firstname(request.getFirstname())
         .lastname(request.getLastname())
@@ -42,26 +50,43 @@ public class AuthenticationService {
     saveUserToken(savedUser, jwtToken);
     return AuthenticationResponse.builder()
         .accessToken(jwtToken)
-            .refreshToken(refreshToken)
+        .refreshToken(refreshToken)
         .build();
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-            request.getEmail(),
-            request.getPassword()
-        )
-    );
+
+    // After successful authentication, retrieve user information
     var user = repository.findByEmail(request.getEmail())
-        .orElseThrow();
+            .orElseThrow(() -> new IllegalArgumentException("Email does not exist"));
+
+    try {
+      authenticationManager.authenticate(
+              new UsernamePasswordAuthenticationToken(
+                      request.getEmail(),
+                      request.getPassword()
+              )
+      );
+    } catch (BadCredentialsException e) {
+      // Handle case where email or password is incorrect
+      throw new IllegalArgumentException("Invalid password");
+    } catch (AuthenticationException e) {
+      // Handle any other authentication exceptions
+      throw new IllegalArgumentException("Authentication failed");
+    }
+
+    // Generate tokens
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
+
+    // Revoke old tokens and save the new one
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
+
+    // Return the authentication response
     return AuthenticationResponse.builder()
         .accessToken(jwtToken)
-            .refreshToken(refreshToken)
+        .refreshToken(refreshToken)
         .build();
   }
 
