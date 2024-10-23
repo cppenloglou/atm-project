@@ -16,4 +16,21 @@ vaadin-text-field.bordered::part(input-field) {
   background-color: var(--lumo-base-color);
 }
 
+.login-rich-content {
+  background-color: grey;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  height: 500px;
+}
+.login-rich-content vaadin-login-form {
+  align-items: center;
+  display: flex;
+  max-width: 300px;
+}
+.login-rich-content vaadin-login-form-wrapper {
+  background-image: none;
+}
+
+
 
