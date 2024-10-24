@@ -1,4 +1,4 @@
-package org.vaadin.example;
+package org.vaadin.example.views;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
@@ -7,6 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.logging.Logger;
+
+import org.springframework.stereotype.Component;
+import org.vaadin.example.MyWebClient;
+import org.vaadin.example.RegisterRequest;
+import org.vaadin.example.SecurityUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,24 +20,31 @@ import com.google.gson.JsonObject;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.textfield.Autocomplete;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 
 @Route("register")
-public class RegisterView extends VerticalLayout {
+@Component
+public class RegisterView extends VerticalLayout implements BeforeEnterObserver{
 
     private final TextField firstNameField = new TextField("First Name");
     private final TextField lastNameField = new TextField("Last Name");
     private final EmailField emailField = new EmailField("Email");
     private final PasswordField passwordField = new PasswordField("Password");
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
-    private final Binder<RegisterRequest> binder = new Binder<>(RegisterRequest.class);
-    
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        VaadinSession.getCurrent().setAttribute("access_token", null);
+        // Notify user and redirect to login
+        Notification.show("If you were logged in, now you have been logged out.", 3000, Notification.Position.BOTTOM_START);
+    }
+
     public RegisterView(MyWebClient myWebClient) {
         // Title
         H1 title = new H1("Register Account");
@@ -45,18 +58,19 @@ public class RegisterView extends VerticalLayout {
         // Register Button
         Button registerButton = new Button("Register");
         registerButton.addClickListener(e -> {
-            String firstName = firstNameField.getValue();
-            String lastName = lastNameField.getValue();
-            String email = emailField.getValue();
-            String password = passwordField.getValue();
-            List<Object> result =  validateRegistration(myWebClient, firstName, lastName, email, password);
+            
+            var request = createRegisterRequest(
+                firstNameField.getValue(), 
+                lastNameField.getValue(),
+                emailField.getValue(),
+                passwordField.getValue());
+            
+            List<Object> result =  validateRegistration(myWebClient, request);
             if ((boolean) result.get(0)) {
                 Notification.show((String) result.get(1), 6000, Notification.Position.TOP_CENTER);
-                resetFieldStyles();
                 registerButton.getUI().ifPresent(ui -> ui.navigate("/login"));
             } else {
                 Notification.show((String) result.get(1), 6000, Notification.Position.TOP_CENTER);
-                changeFieldStyles();
             }
         });
 
@@ -66,39 +80,25 @@ public class RegisterView extends VerticalLayout {
         add(title, firstNameField, lastNameField, emailField, passwordField, registerButton);
     }
 
-    private void resetFieldStyles() {
-        firstNameField.removeClassName("invalid");
-        lastNameField.removeClassName("invalid");
-        emailField.removeClassName("invalid");
-        passwordField.removeClassName("invalid");
-    }
-
-    private void changeFieldStyles() {
-        if (!binder.validate().isOk()) {
-            // If fields are invalid, add the invalid class
-            firstNameField.addClassName("invalid");
-            lastNameField.addClassName("invalid");
-            emailField.addClassName("invalid");
-            passwordField.addClassName("invalid");
-        }
-    }
-
-    // Basic validation for demonstration purposes
-    private List<Object> validateRegistration(MyWebClient myWebClient,  String firstName, String lastName, String email, String password) {
-        var request = RegisterRequest
-        .builder()
+    private RegisterRequest createRegisterRequest(String firstName, String lastName, String email, String password){
+        return RegisterRequest.builder()
         .email(email)
         .firstname(firstName)
         .lastname(lastName)
         .password(password)
         .role("USER")
         .build();
+    }
+    
+    private List<Object> validateRegistration(MyWebClient myWebClient,  RegisterRequest request) {
+        
 
         List<Object> responseList = new ArrayList<>();
         Gson gson = new GsonBuilder().create();
         try{
             String response = myWebClient.register(request);
-            System.out.println(response);
+            logger.info(response);
+            
             JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
 
             // If you want to convert it to a Map later
@@ -108,7 +108,8 @@ public class RegisterView extends VerticalLayout {
             }
             responseList.add(true);
             responseList.add("Registration successful!");
-            responseList.add(tokenMap.get(""));
+            responseList.add(tokenMap.get("access_token"));
+
         } catch (RuntimeException e) {
 
             JsonObject jsonObject = gson.fromJson(e.getMessage().strip(), JsonObject.class);
@@ -124,6 +125,7 @@ public class RegisterView extends VerticalLayout {
             responseList.add(false);
             responseList.add(errorJoiner.toString());
         }
+
         return responseList;
     }
 }

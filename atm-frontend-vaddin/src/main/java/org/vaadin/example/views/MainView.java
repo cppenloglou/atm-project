@@ -1,4 +1,4 @@
-package org.vaadin.example;
+package org.vaadin.example.views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -8,11 +8,19 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 
 @Route("")
 @CssImport("./styles/my-custom.css")
-public class MainView extends HorizontalLayout {
+public class MainView extends HorizontalLayout implements BeforeEnterObserver{
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        VaadinSession.getCurrent().setAttribute("access_token", null);
+    }
 
     public MainView() {
         setSizeFull(); // Make sure the layout takes the full size of the window

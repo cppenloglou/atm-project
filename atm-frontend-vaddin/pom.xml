@@ -44,6 +44,12 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.vaadin</groupId>
             <!-- Replace artifactId with vaadin-core to use only free components -->
@@ -76,7 +82,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-        </dependency>      
+        </dependency>    
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench-junit5</artifactId>
@@ -98,6 +104,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <name>atm-service:1.0-SNAPSHOT</name>
+                        <env>
+                            <VAADIN_PRODUCTION_MODE>true</VAADIN_PRODUCTION_MODE>
+                        </env>
+                    </image>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
@@ -110,7 +124,6 @@
                             <file>${project.basedir}/eclipse-formatter.xml</file>
                         </eclipse>
                     </java>
-                    <!-- Uncomment to format TypeScript files 
                         <typescript>
                         <includes>
                             <include>src/main/frontend/**/*.ts</include>
@@ -124,7 +137,7 @@
                             <configFile>.prettierrc.json</configFile>
                         </prettier>
                     </typescript>
-                -->
+               
                 </configuration>
             </plugin>
             <plugin>

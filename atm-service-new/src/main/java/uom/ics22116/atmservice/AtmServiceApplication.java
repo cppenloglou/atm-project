@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import uom.ics22116.atmservice.auth.AuthenticationService;
 import uom.ics22116.atmservice.auth.RegisterRequest;
+import uom.ics22116.atmservice.user.UserRepository;
 
 import static uom.ics22116.atmservice.user.Role.ADMIN;
 import static uom.ics22116.atmservice.user.Role.MANAGER;
@@ -20,10 +21,13 @@ public class AtmServiceApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(
-            AuthenticationService service
-    ) {
-        return args -> {
+public CommandLineRunner commandLineRunner(
+        AuthenticationService service,
+        UserRepository userRepository // Inject your user repository
+) {
+    return args -> {
+        // Check for existing admin
+        if (!userRepository.existsByEmail("admin@mail.com")) {
             var admin = RegisterRequest.builder()
                     .firstname("Admin")
                     .lastname("Admin")
@@ -32,17 +36,24 @@ public class AtmServiceApplication {
                     .role(ADMIN)
                     .build();
             System.out.println("Admin token: " + service.register(admin).getAccessToken());
+        } else {
+            System.out.println("Admin already exists.");
+        }
 
+        // Check for existing manager
+        if (!userRepository.existsByEmail("manager@mail.com")) {
             var manager = RegisterRequest.builder()
-                    .firstname("Admin")
-                    .lastname("Admin")
+                    .firstname("Manager") // Change to "Manager" for clarity
+                    .lastname("Manager")
                     .email("manager@mail.com")
                     .password("password")
                     .role(MANAGER)
                     .build();
             System.out.println("Manager token: " + service.register(manager).getAccessToken());
-
-        };
-    }
+        } else {
+            System.out.println("Manager already exists.");
+        }
+    };
+}
 
 }

@@ -7,6 +7,7 @@ import uom.ics22116.atmservice.user.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +45,9 @@ public class AccountService {
 
     public void saveAccount(Account account) {
         accountRepository.save(account);
+    }
+
+    public Account getAccountsByUser(User user) {
+        return accountRepository.findAllByUser(user).get(0);
     }
 }
