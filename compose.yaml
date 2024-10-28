@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: atm-service-db
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: cppenloglou
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  atm-service-microservice:
+    image: cppenloglou/atm-service-api:1.0  # Use the name of your built Spring Boot application image
+    container_name: atm-service-api
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/atm-service-db
+      SPRING_DATASOURCE_USERNAME: cppenloglou
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+      - "8080:8080"
+
+  atm-service-frontend:
+    image: cppenloglou/atm-service-frontend:1.0  # Use the name of your built Spring Boot application image
+    container_name: atm-service-frontend
+    environment:
+      BASE_URL: http://atm-service-microservice:8080
+    ports:
+      - "8082:8082"

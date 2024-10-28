@@ -111,8 +111,8 @@ public class RegisterView extends VerticalLayout implements BeforeEnterObserver{
             responseList.add(tokenMap.get("access_token"));
 
         } catch (RuntimeException e) {
-
-            JsonObject jsonObject = gson.fromJson(e.getMessage().strip(), JsonObject.class);
+            String message = e.getMessage().strip();
+            JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
 
             // If you want to convert it to a Map later
             Map<String, String> errorMap = new HashMap<>();
