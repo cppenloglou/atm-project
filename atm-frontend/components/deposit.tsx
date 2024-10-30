@@ -3,8 +3,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider } from "./ui/sidebar"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { useState } from "react"
-import { Toast } from "./ui/toast"
-
+import { useToast } from "@/hooks/use-toast"
 export default function DepositPage() {
   const [amount, setAmount] = useState("")
 
