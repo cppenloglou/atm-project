@@ -15,4 +15,7 @@ public class ApplicationConfig {
     public WebClient webClient() {
         return WebClient.builder().baseUrl(baseUrl).build();
     }
+
+    
+
 }

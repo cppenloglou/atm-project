@@ -111,6 +111,9 @@ public class DashboardView extends AppLayout implements BeforeEnterObserver {
         Gson gson = new GsonBuilder().create();
         mainContent.removeAll();
         var user = VaadinSession.getCurrent().getAttribute("user");
+        if (user == null) {
+            return;
+        }
         Map<String, String> userMap = (Map<String, String>) user;
         H3 firstname = new H3("Firstname: " + userMap.get("firstname"));
         H3 lastname = new H3("Lastname: " + userMap.get("lastname"));

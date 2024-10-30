@@ -33,6 +33,7 @@ services:
   atm-service-frontend:
     image: cppenloglou/atm-service-frontend:1.0  # Use the name of your built Spring Boot application image
     container_name: atm-service-frontend
+    restart: always
     environment:
       BASE_URL: http://atm-service-microservice:8080
     ports:
