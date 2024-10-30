@@ -6,8 +6,6 @@ import uom.ics22116.atmservice.account.Account;
 import uom.ics22116.atmservice.account.AccountService;
 import uom.ics22116.atmservice.account.FrontendAccount;
 
-import org.hibernate.mapping.Collection;
-import org.springframework.boot.autoconfigure.pulsar.PulsarProperties.Transaction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
-
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 
 @RestController

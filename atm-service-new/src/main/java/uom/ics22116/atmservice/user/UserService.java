@@ -1,6 +1,5 @@
 package uom.ics22116.atmservice.user;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import uom.ics22116.atmservice.token.TokenRepository;
 

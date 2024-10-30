@@ -1,5 +1,7 @@
-import { LogOut, Home, BookUp2, BookDown, User2, ChevronUp} from "lucide-react"
+"use client"
 
+import { LogOut, Home, BookUp2, BookDown, User2, ChevronUp} from "lucide-react"
+import { useEffect, useState } from "react"
 import {
   Sidebar,
   SidebarContent,
@@ -43,6 +45,15 @@ const dropdown_items = [
 ]
 
 export function AppSidebar() {
+  const [userInfo, setUserInfo] = useState<{firstname: string} | null>(null);
+
+  useEffect(() => {
+    const storedUserInfo = localStorage.getItem('userInfo');
+    if (storedUserInfo) {
+      setUserInfo(JSON.parse(storedUserInfo));
+    }
+  }, []);
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -70,7 +81,7 @@ export function AppSidebar() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton>
-                    <User2 /> Username
+                    <User2 /> {userInfo?.firstname || "Loading..."}
                     <ChevronUp className="ml-auto" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
