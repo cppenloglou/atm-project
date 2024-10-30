@@ -24,7 +24,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 
 @Route("/dashboard")
 public class DashboardView extends AppLayout implements BeforeEnterObserver {
-    
+
     private VerticalLayout mainContent;
 
     @Override
@@ -75,7 +75,7 @@ public class DashboardView extends AppLayout implements BeforeEnterObserver {
 
         RouterLink withdrawalLink = new RouterLink("Withdrawal", WithdrawalView.class);
         withdrawalLink = createLink(withdrawalLink);
-        
+
         RouterLink depositLink = new RouterLink("Deposit", DepositView.class);
         depositLink = createLink(depositLink);
 
@@ -120,10 +120,14 @@ public class DashboardView extends AppLayout implements BeforeEnterObserver {
         H3 email = new H3("Email: " + userMap.get("email"));
         String id = userMap.get("id");
         var token = VaadinSession.getCurrent().getAttribute("access_token");
+        if (token == null) {
+            Notification.show("Session expired. Please login again.", 3000, Notification.Position.BOTTOM_START);
+            return;
+        }
         var accountrequest = myWebClient.getAllAccountsForUser(id, token.toString());
         JsonObject account = gson.fromJson(accountrequest, JsonObject.class);
         VaadinSession.getCurrent().setAttribute("account", account);
-        H3 balanceInfo = new H3("Balance: $"+ account.get("balance").getAsString()); // Example balance
+        H3 balanceInfo = new H3("Balance: $" + account.get("balance").getAsString()); // Example balance
         mainContent.add(firstname, lastname, email, balanceInfo);
     }
 }
