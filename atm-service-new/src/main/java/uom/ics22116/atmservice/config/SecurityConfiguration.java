@@ -15,7 +15,6 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.cors.CorsConfiguration;
 
 import static org.springframework.http.HttpMethod.*;
-import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static uom.ics22116.atmservice.user.Permission.*;
 import static uom.ics22116.atmservice.user.Role.*;
@@ -51,6 +50,7 @@ public class SecurityConfiguration {
                     config.setAllowedOrigins(java.util.Arrays.asList("http://localhost:3000"));
                     config.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE")); 
                     config.setAllowedHeaders(java.util.Arrays.asList("Authorization", "Content-Type"));
+                    config.setAllowCredentials(true);
                     return config;
                 }))
                 .authorizeHttpRequests(req ->

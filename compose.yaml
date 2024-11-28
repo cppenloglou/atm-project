@@ -18,7 +18,7 @@ services:
       retries: 5
 
   atm-service-microservice:
-    image: cppenloglou/atm-service-api:1.0  # Use the name of your built Spring Boot application image
+    image: cppenloglou/atm-service-api:1.0
     container_name: atm-service-api
     restart: always
     depends_on:
@@ -31,10 +31,10 @@ services:
       - "8080:8080"
 
   atm-service-frontend:
-    image: cppenloglou/atm-service-frontend:1.0  # Use the name of your built Spring Boot application image
+    image: cppenloglou/atm-service-frontend:1.0
     container_name: atm-service-frontend
     restart: always
     environment:
       BASE_URL: http://atm-service-microservice:8080
     ports:
-      - "8082:8082"
+      - "3000:3000"

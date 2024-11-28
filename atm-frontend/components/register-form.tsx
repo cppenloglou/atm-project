@@ -48,14 +48,15 @@ export function RegisterForm() {
             } else if (response.status == 400) {
                 const parsedData = JSON.parse(((await response.text()).toString()));
         
-                function getAllValues(obj: Record<string, any>): any[] {
-                  return Object.values(obj).flatMap(value => {
-                    if (typeof value === 'object' && value !== null) {
-                      return getAllValues(value);
-                    }
-                    return value;
-                  });
-                }
+                function getAllValues<T extends Record<string, unknown>>(obj: T): unknown[] {
+                    return Object.values(obj).flatMap(value => {
+                      if (typeof value === 'object' && value !== null) {
+                        // Assert that value is a Record<string, unknown>
+                        return getAllValues(value as Record<string, unknown>);
+                      }
+                      return value;
+                    });
+                  }
         
                 // Convert values to comma-separated string
                 const valuesString = getAllValues(parsedData).join(',');
