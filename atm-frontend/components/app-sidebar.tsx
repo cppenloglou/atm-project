@@ -2,6 +2,8 @@
 
 import { LogOut, Home, BookUp2, BookDown, User2, ChevronUp} from "lucide-react"
 import { useEffect, useState } from "react"
+import { useToast } from "@/hooks/use-toast"
+import { Toaster } from "@/components/ui/toaster"
 import {
   Sidebar,
   SidebarContent,
@@ -9,15 +11,12 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
-import { Button } from "./ui/button"
 
-// Menu items.
 const items = [
   {
     title: "Home",
@@ -46,6 +45,7 @@ const dropdown_items = [
 
 export function AppSidebar() {
   const [userInfo, setUserInfo] = useState<{firstname: string} | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const storedUserInfo = localStorage.getItem('userInfo');
@@ -54,28 +54,43 @@ export function AppSidebar() {
     }
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('userInfo');
+    
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 500);
+  }
+
   return (
-    <Sidebar>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>ATM Menu</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
+    <>
+      <Toaster />
+      <Sidebar>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>ATM Menu</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <a href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
@@ -90,11 +105,9 @@ export function AppSidebar() {
                   className="w-56"
                 >{dropdown_items.map((item) => (
                   <DropdownMenuItem key={item.title}>
-                    <SidebarMenuButton>
+                    <SidebarMenuButton onClick={handleLogout}>
                       <item.icon />
-                      <a href={item.url}>
-                        <span>{item.title}</span>
-                      </a>
+                      <span>{item.title}</span>
                     </SidebarMenuButton>
                   </DropdownMenuItem>
                 ))}
@@ -103,6 +116,7 @@ export function AppSidebar() {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>
-    </Sidebar>
+      </Sidebar>
+    </>
   )
 }

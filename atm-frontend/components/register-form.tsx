@@ -10,9 +10,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
+import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
 
 export function RegisterForm() {
+    const { toast } = useToast();
     const router = useRouter();
     const [formData, setFormData] = useState({
         firstname: '',
@@ -43,10 +45,34 @@ export function RegisterForm() {
 
             if (response.ok) {
                 router.push('/login');
-            } else {
-                const errorData = await response.json();
-                console.error('Registration failed:', errorData);
-            }
+            } else if (response.status == 400) {
+                const parsedData = JSON.parse(((await response.text()).toString()));
+        
+                function getAllValues(obj: Record<string, any>): any[] {
+                  return Object.values(obj).flatMap(value => {
+                    if (typeof value === 'object' && value !== null) {
+                      return getAllValues(value);
+                    }
+                    return value;
+                  });
+                }
+        
+                // Convert values to comma-separated string
+                const valuesString = getAllValues(parsedData).join(',');
+                toast({
+                  title: "Login Failed",
+                  description: valuesString,
+                  variant: "destructive",
+                })
+              } else if (response.status == 409) {
+                toast({
+                  title: "Login Failed",
+                  description: await response.text(),
+                  variant: "destructive",
+                })
+              } else {
+                console.error(response.status);
+              }
         } catch (error) {
             console.error('Error during registration:', error);
         }

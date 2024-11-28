@@ -13,8 +13,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
+import { useToast } from "@/hooks/use-toast"
+
 
 export function LoginForm() {
+  const { toast } = useToast();
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
@@ -67,6 +70,7 @@ export function LoginForm() {
     }
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -87,8 +91,29 @@ export function LoginForm() {
         localStorage.setItem('refreshToken', refreshToken);
         await fetchUserInfo(accessToken);
         router.push('/main');
+      } else if (response.status == 400) {
+        const parsedData = JSON.parse(((await response.text()).toString()));
+
+
+
+        function getAllValues(obj: Record<string, any>): any[] {
+          return Object.values(obj).flatMap(value => {
+            if (typeof value === 'object' && value !== null) {
+              return getAllValues(value);
+            }
+            return value;
+          });
+        }
+
+        // Convert values to comma-separated string
+        const valuesString = getAllValues(parsedData).join(',');
+        toast({
+          title: "Login Failed",
+          description: valuesString,
+          variant: "destructive",
+        })
       } else {
-        console.error('Login failed');
+        console.error(response.status);
       }
     } catch (error) {
       console.error('Error during login:', error);

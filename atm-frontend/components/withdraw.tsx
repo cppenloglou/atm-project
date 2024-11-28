@@ -86,7 +86,7 @@ export default function WithdrawPage() {
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-slate-50 w-screen">
       <SidebarProvider>
         <AppSidebar />
         <main className="flex-1 p-6 flex flex-col items-center justify-center">
