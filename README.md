@@ -3,10 +3,19 @@
 This repository, hosted at [ATM Project GitHub](https://github.com/cppenloglou/ATM-project.git), contains three interconnected applications designed for an ATM service system:
 
 1. **ATM Microservice Backend Server (API)**
-2. **ATM Frontend in Vaadin**
-3. **ATM Frontend in Next.js (Under Construction)**
+2. **ATM Frontend in Next.js (Under Construction)**
 
 Each application serves a distinct role, providing a modular, scalable solution for the ATM service project.
+
+### Setup
+1. Clone the repository:
+```bash
+git clone https://github.com/cppenloglou/ATM-project.git
+```
+2. Start the MySQL Docker container:
+```bash
+docker-compose -f compose-remote.yaml up -d
+```
 
 ---
 
@@ -25,48 +34,11 @@ The **ATM Backend Service** is a Spring Boot application that provides RESTful A
 - **MySQL** (via Docker)
 - **JWT** for API Security
 
-### Setup
-1. Clone the repository:
-```bash
-git clone https://github.com/cppenloglou/ATM-project.git
-```
-2. Start the MySQL Docker container:
-```bash
-docker-compose up -d
-```
-3. Run the application:
-```bash
-./mvnw spring-boot:run
-```
-
 # API Documentation
 
 API documentation is available at: `/api-docs` once the server is running.
 
-## 2. ATM Frontend in Vaadin
-
-The ATM Frontend in Vaadin serves as a responsive, user-friendly interface for ATM operations. Users can access and manage their accounts, view transaction history, and perform ATM operations like withdrawals and deposits.
-
-### Key Features
-
-- **Dashboard**: View user information and account balance.
-- **Dynamic Views**: Withdraw and Deposit views share a common layout with respective functionality.
-- **Authentication Check**: Only authorized users can access sensitive pages.
-
-### Tech Stack
-
-- Vaadin for UI components
-- Java as the core language
-- Spring Boot for backend integration
-
-### Setup
-
-1. Ensure the backend server is running.
-2. Start the frontend application with:
-```bash
-./mvnw spring-boot:run
-```
-## 3. ATM Frontend in Next.js (Under Construction)
+## 2. ATM Frontend in Next.js
 
 The Next.js Frontend is an alternative interface currently in development. This frontend will be a modern, responsive web application with interactive UI components provided by Shadcn UI.
 
@@ -82,11 +54,10 @@ The Next.js Frontend is an alternative interface currently in development. This 
 - **Shadcn UI** for UI components
 - **React** for building interactive UIs
 
-## Setup
+## Development run
 
-Development for this frontend is ongoing. Once complete, it will support the following setup:
+
 
 ```bash
 npm install
 npm run dev
-
