@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: atm-service-db
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: cppenloglou
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  atm-service-microservice:
+    image: cppenloglou/atm-service:latest
+    container_name: atm-service
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/atm-service-db
+      SPRING_DATASOURCE_USERNAME: cppenloglou
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+      - "8080:8080"
+
+  atm-service-frontend:
+    image: cppenloglou/atm-frontend:latest
+    container_name: atm-frontend
+    restart: always
+    environment:
+      BASE_URL: http://atm-service-microservice:8080
+    ports:
+      - "3000:3000"
