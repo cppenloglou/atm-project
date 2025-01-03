@@ -1,0 +1,103 @@
+# PersistentVolume configuration
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+  labels:
+    type: local
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data/mysql"
+---
+# PersistentVolumeClaim configuration
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# MySQL Service configuration
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f compose-remote.yaml -o kubernetes/
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: mysql
+  name: mysql
+spec:
+  ports:
+    - name: "mysql"
+      port: 3306
+      targetPort: 3306
+  selector:
+    io.kompose.service: mysql
+---
+# MySQL Deployment configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f compose-remote.yaml -o kubernetes/
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: mysql
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mysql
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f compose-remote.yaml -o kubernetes/
+        kompose.version: 1.35.0 (9532ceef3)
+      labels:
+        io.kompose.service: mysql
+    spec:
+      containers:
+        - env:
+            - name: MYSQL_DATABASE
+              value: atm-service-db
+            - name: MYSQL_PASSWORD
+              value: password
+            - name: MYSQL_ROOT_PASSWORD
+              value: password
+            - name: MYSQL_USER
+              value: cppenloglou
+          image: mysql:latest
+          livenessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -h
+                - localhost
+            failureThreshold: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          name: mysql
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          volumeMounts:
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-storage
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+      restartPolicy: Always

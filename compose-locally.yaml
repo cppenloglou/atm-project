@@ -34,7 +34,5 @@ services:
     image: cppenloglou/atm-frontend:latest
     container_name: atm-frontend
     restart: always
-    environment:
-      BASE_URL: http://atm-service-microservice:8080
     ports:
       - "3000:3000"

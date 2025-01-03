@@ -13,6 +13,9 @@ import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
 
+const baseurl = process.env.NEXT_PUBLIC_API_URL;
+
+
 export function RegisterForm() {
     const { toast } = useToast();
     const router = useRouter();
@@ -35,7 +38,7 @@ export function RegisterForm() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:8080/api/v1/auth/register', {
+            const response = await fetch(`${baseurl}/api/v1/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -11,6 +11,9 @@ import { useToast } from "@/hooks/use-toast"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 
+const baseurl = process.env.NEXT_PUBLIC_API_URL;
+
+
 export default function DepositPage() {
   const [amount, setAmount] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -30,7 +33,7 @@ export default function DepositPage() {
         throw new Error("Authentication information is missing")
       }
 
-      const response = await fetch("http://localhost:8080/api/v1/transaction", {
+      const response = await fetch(`${baseurl}/api/v1/transaction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +73,7 @@ export default function DepositPage() {
   const updateAccountInfo = async (token: string) => {
     try {
       const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
-      const accountResponse = await fetch(`http://localhost:8080/api/v1/users/${userInfo.id}/accounts`, {
+      const accountResponse = await fetch(`${baseurl}/api/v1/users/${userInfo.id}/accounts`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +98,7 @@ export default function DepositPage() {
   }
 
   return (
-    <div className="flex h-screen bg-slate-50 w-screen">
+    <div className="flex h-screen bg-slate-100 w-screen">
       <SidebarProvider>
         <AppSidebar />
         <main className="flex-1 p-6 flex flex-col items-center justify-center">

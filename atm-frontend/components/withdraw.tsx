@@ -10,6 +10,9 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 
+const baseurl = process.env.NEXT_PUBLIC_API_URL;
+
+
 export default function WithdrawPage() {
   const [amount, setAmount] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -29,7 +32,7 @@ export default function WithdrawPage() {
         throw new Error("Authentication information is missing")
       }
 
-      const response = await fetch(`http://localhost:8080/api/v1/transaction`, {
+      const response = await fetch(`${baseurl}/api/v1/transaction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +72,7 @@ export default function WithdrawPage() {
 
   const updateAccountInfo = async (token: string) => {
     const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
-    const accountResponse = await fetch(`http://localhost:8080/api/v1/users/${userInfo.id}/accounts`, {
+    const accountResponse = await fetch(`${baseurl}/api/v1/users/${userInfo.id}/accounts`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

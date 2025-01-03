@@ -15,6 +15,9 @@ import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 
+const baseurl = process.env.NEXT_PUBLIC_API_URL;
+
+console.log("NEXT_PUBLIC_API_URL:", baseurl); // Debugging line
 
 export function LoginForm() {
   const { toast } = useToast();
@@ -34,7 +37,7 @@ export function LoginForm() {
 
   const fetchUserInfo = async (token: string) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/users/by-token?token=${token}`, {
+      const response = await fetch(`${baseurl}/api/v1/users/by-token?token=${token}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +50,7 @@ export function LoginForm() {
         localStorage.setItem('userInfo', JSON.stringify(userInfo));
         
         // Fetch account info using user ID
-        const accountResponse = await fetch(`http://localhost:8080/api/v1/users/${userInfo.id}/accounts`, {
+        const accountResponse = await fetch(`${baseurl}/api/v1/users/${userInfo.id}/accounts`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -74,7 +77,7 @@ export function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8080/api/v1/auth/authenticate', {
+      const response = await fetch(`${baseurl}/api/v1/auth/authenticate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
