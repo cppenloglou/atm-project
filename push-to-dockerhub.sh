@@ -9,8 +9,8 @@ OLD_IMAGE_2="cppenloglou/atm-service:latest"
 NEW_IMAGE_2="cppenloglou/atm-service-api:1.0"
 
 # Docker Hub credentials (optional if you're already logged in)
-DOCKER_USERNAME="my_username"
-DOCKER_PASSWORD="my_password"
+DOCKER_USERNAME="cppenloglou"
+DOCKER_PASSWORD="sBm9Tk7eJYhxjn"
 
 # Log in to Docker Hub (optional if already logged in)
 echo "Logging in to Docker Hub..."
